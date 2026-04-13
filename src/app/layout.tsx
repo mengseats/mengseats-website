@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -7,12 +7,6 @@ import Footer from "@/components/Footer";
 const manrope = Manrope({
   variable: "--font-sans",
   subsets: ["latin"],
-});
-
-const cormorant = Cormorant_Garamond({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -30,10 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${cormorant.variable}`}>
+    <html lang="en" className={manrope.variable}>
       <body className="min-h-screen flex flex-col font-sans antialiased bg-background text-foreground">
         <Navbar />
-        <main className="flex-1 pt-[72px]">{children}</main>
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>

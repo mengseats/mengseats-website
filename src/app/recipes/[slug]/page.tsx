@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import MediaPlaceholder from "@/components/MediaPlaceholder";
-import SectionHeading from "@/components/SectionHeading";
-import Tag from "@/components/Tag";
 import { getRecipeBySlug, recipes } from "@/data/recipes";
 
 interface RecipePageProps {
@@ -11,150 +7,81 @@ interface RecipePageProps {
 }
 
 export async function generateStaticParams() {
-  return recipes.map((recipe) => ({
-    slug: recipe.slug,
-  }));
+  return recipes.map((r) => ({ slug: r.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: RecipePageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
   const { slug } = await params;
   const recipe = getRecipeBySlug(slug);
-
-  if (!recipe) {
-    return {
-      title: "Recipe Not Found",
-    };
-  }
-
-  return {
-    title: recipe.title,
-    description: recipe.description,
-  };
+  if (!recipe) return { title: "Recipe Not Found" };
+  return { title: recipe.title, description: recipe.description };
 }
 
 export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const { slug } = await params;
   const recipe = getRecipeBySlug(slug);
+  if (!recipe) notFound();
 
-  if (!recipe) {
-    notFound();
-  }
+  // Build 4 image slots: real images + remaining placeholders
+  const imageSlots = [
+    ...recipe.images,
+    ...Array(Math.max(0, 4 - recipe.images.length)).fill(null),
+  ].slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
-      <Link
-        href="/recipes"
-        className="mb-8 inline-flex text-sm uppercase tracking-[0.22em] text-muted hover:text-foreground"
-      >
-        Back to recipes
-      </Link>
+    <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
+      {/* Title */}
+      <h1 className="mb-8 text-center font-display text-4xl text-foreground md:text-5xl">
+        {recipe.title}
+      </h1>
 
-      <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
-          <div className="flex flex-wrap gap-3">
-            <Tag>{recipe.category}</Tag>
-            <Tag>{recipe.cookTime}</Tag>
-            <Tag>{recipe.difficulty}</Tag>
-          </div>
-
-          <div className="space-y-5">
-            <h1 className="font-display text-5xl leading-none text-foreground sm:text-7xl">
-              {recipe.title}
-            </h1>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
-              {recipe.description}
-            </p>
-            <p className="max-w-2xl text-base leading-8 text-ink-soft">
-              {recipe.intro}
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[1.75rem] border border-border bg-card p-5">
-              <p className="text-xs uppercase tracking-[0.28em] text-muted">Time</p>
-              <p className="mt-3 font-display text-3xl">{recipe.cookTime}</p>
-            </div>
-            <div className="rounded-[1.75rem] border border-border bg-card p-5">
-              <p className="text-xs uppercase tracking-[0.28em] text-muted">Servings</p>
-              <p className="mt-3 font-display text-3xl">{recipe.servings}</p>
-            </div>
-            <div className="rounded-[1.75rem] border border-border bg-card p-5">
-              <p className="text-xs uppercase tracking-[0.28em] text-muted">Level</p>
-              <p className="mt-3 font-display text-3xl">{recipe.difficulty}</p>
+      {/* 4 images in a row */}
+      <div className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+        {imageSlots.map((img, i) => (
+          <div key={i} className="aspect-square overflow-hidden rounded-xl bg-border">
+            <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+              {img ?? `Photo ${i + 1}`}
             </div>
           </div>
-        </div>
+        ))}
+      </div>
 
-        <MediaPlaceholder
-          label={recipe.images[0] ?? recipe.title}
-          caption="Primary recipe image placeholder. Replace with your hero shot when you're ready."
-          className={`bg-gradient-to-br ${recipe.accent}`}
-        />
-      </section>
-
-      <section className="mt-10 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-6 rounded-[2rem] border border-border bg-card p-6 sm:p-8">
-          <SectionHeading
-            eyebrow="Ingredients"
-            title="Everything you need"
-            description="This section mirrors your sketch: grouped ingredients on the left with enough room for short notes and swaps."
-          />
-
-          <div className="space-y-6">
-            {recipe.ingredientGroups.map((group) => (
-              <div key={group.name} className="rounded-[1.5rem] bg-background p-5">
-                <h2 className="font-display text-3xl text-foreground">{group.name}</h2>
-                <ul className="mt-4 space-y-3 text-sm leading-7 text-muted">
-                  {group.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="rounded-[2rem] border border-border bg-card p-6 sm:p-8">
-            <SectionHeading
-              eyebrow="Directions"
-              title="Cook step by step"
-              description="Longer method text can live here, with room for extra process shots or a reel embed."
-            />
-
-            <ol className="mt-8 space-y-4">
-              {recipe.instructions.map((step, index) => (
-                <li
-                  key={step}
-                  className="grid gap-4 rounded-[1.5rem] bg-background p-5 sm:grid-cols-[auto_1fr]"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-foreground text-sm text-background">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm leading-7 text-muted">{step}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <MediaPlaceholder
-              label={recipe.videoLabel ?? "Video placeholder"}
-              caption="Optional embedded video area."
-            />
-            <div className="rounded-[2rem] border border-border bg-card p-6">
-              <p className="text-xs uppercase tracking-[0.28em] text-accent">Extra Notes</p>
-              <ul className="mt-5 space-y-4 text-sm leading-7 text-muted">
-                {recipe.notes.map((note) => (
-                  <li key={note}>{note}</li>
+      {/* Two columns: Ingredients | Instructions */}
+      <div className="grid gap-12 md:grid-cols-[1fr_1.5fr]">
+        {/* Ingredients */}
+        <div>
+          <h2 className="mb-6 font-display text-2xl text-foreground">Ingredients</h2>
+          {recipe.ingredientGroups.map((group) => (
+            <div key={group.name} className="mb-6">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-accent">
+                {group.name}
+              </h3>
+              <ul className="space-y-2 border-l-2 border-border pl-4">
+                {group.items.map((item) => (
+                  <li key={item} className="text-sm leading-relaxed text-muted">
+                    {item}
+                  </li>
                 ))}
               </ul>
             </div>
-          </div>
+          ))}
         </div>
-      </section>
+
+        {/* Instructions */}
+        <div>
+          <h2 className="mb-6 font-display text-2xl text-foreground">Instructions</h2>
+          <ol className="space-y-4">
+            {recipe.instructions.map((step, i) => (
+              <li key={i} className="flex gap-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
+                  {i + 1}
+                </span>
+                <p className="text-sm leading-relaxed text-muted">{step}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
     </div>
   );
 }

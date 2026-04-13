@@ -1,8 +1,8 @@
-export interface GallerySection {
-  slug: string;
-  title: string;
-  description: string;
-  items: string[];
+export interface GalleryItem {
+  id: string;
+  src: string;
+  label: string;
+  category: string;
 }
 
 export interface BlogPost {
@@ -23,41 +23,127 @@ export interface AboutSection {
   }[];
 }
 
-export const gallerySections: GallerySection[] = [
-  {
-    slug: "recipe-shoots",
-    title: "Recipe Shoots",
-    description: "Styled dish photography and hero images for finished recipes.",
-    items: ["Hero plate", "Overhead setup", "Ingredient prep", "Close-up texture"],
-  },
-  {
-    slug: "behind-the-scenes",
-    title: "Behind The Scenes",
-    description: "Kitchen process moments, filming setups, and in-progress stories.",
-    items: ["Tripod corner", "Sauce pour", "Notebook planning", "Editing desk"],
-  },
-  {
-    slug: "city-bites",
-    title: "City Bites",
-    description: "Restaurant finds, travel meals, and local food discoveries.",
-    items: ["Cafe window seat", "Street food tray", "Dinner spread", "Dessert stop"],
-  },
-];
+export const galleryCategories = [
+  "cooks",
+  "eats",
+  "travels",
+  "tunes",
+  "other",
+] as const;
+
+export type GalleryCategory = (typeof galleryCategories)[number];
+
+const galleryFileMap: Record<GalleryCategory, string[]> = {
+  cooks: [
+    "citrus-dashi-crudo.JPG",
+    "lamb.JPG",
+    "sea-bass.JPG",
+    "chix.JPG",
+    "grilled-cheese.jpg",
+    "grilled-salmon.JPG",
+    "malai-kari-shrimp-and-grits.JPG",
+    "matcha-tiramisu.JPG",
+    "octopus.JPG",
+    "porchetta.jpg",
+    "verci-crudo.jpg",
+  ],
+  eats: [
+    "beef-noodle-soup.JPG",
+    "marrow.JPG",
+    "brains.png",
+    "cotogna-crudo.jpg",
+    "dim-sum.JPG",
+    "greek-plate.JPG",
+    "hangzhou-meal.JPG",
+    "mapo-tofu.JPG",
+    "pizza.jpg",
+    "sushi.JPG",
+    "tacos.jpg",
+  ],
+  travels: [
+    "taj-mahal.JPG",
+    "casablanca.JPG",
+    "shanghai.JPG",
+    "jaipur.jpg",
+    "chongqing.JPG",
+    "coachella-valley.jpg",
+    "fes.JPG",
+    "ganges.jpg",
+    "khajuraho.jpg",
+    "new-york.JPG",
+    "osaka.png",
+    "san-francisco.jpg",
+    "shibuya.png",
+    "taipei.JPG",
+  ],
+  tunes: [
+    "yuree-8.12.25.PNG",
+    "fka-twigs-3.16.26.JPG",
+    "jid-8.7.25.jpg",
+    "2hollis-8.16.25.jpg",
+    "anderson-.paak-8.13.24.JPG",
+    "bladee-10.15.25.jpg",
+    "denzel-curry-4.10.25.JPG",
+    "duster-9.27.24.JPG",
+    "icytwat-4.10.24.jpg",
+    "jane-remover-9.6.24.JPG",
+    "japanese-club-5.26.25.JPG",
+    "kaytranada-11.12.25.JPG",
+    "machine-girl-11.9.24.JPG",
+    "magdalena-bay-8.24.24.JPG",
+    "panchiko-11.21.24.JPG",
+    "quannnic-9.7.25.jpg",
+    "saba-6.15.25.JPG",
+    "slowdive-5.17.24.JPG",
+  ],
+  other: [
+    "spiraling.JPG",
+    "gtc.JPEG",
+    "atl2.JPG",
+    "atl.jpg",
+    "backrooms.jpg",
+    "cat.JPG",
+    "construction.jpg",
+    "pisces.JPG",
+    "receipts.jpg",
+    "stranger-things.JPG",
+  ],
+};
+
+function humanizeGalleryLabel(fileName: string) {
+  return fileName
+    .replace(/\.[^.]+$/, "")
+    .replace(/[-_]+/g, " ")
+    .trim();
+}
+
+function buildGalleryItems(category: GalleryCategory, files: string[]): GalleryItem[] {
+  return files.map((fileName, index) => ({
+    id: `${category}-${index + 1}`,
+    src: `/images/gallery/${category}/${fileName}`,
+    label: humanizeGalleryLabel(fileName),
+    category,
+  }));
+}
+
+export const galleryItems: GalleryItem[] = galleryCategories.flatMap((category) =>
+  buildGalleryItems(category, galleryFileMap[category]),
+);
 
 export const blogPosts: BlogPost[] = [
   {
     slug: "welcome-to-mengseats",
-    title: "Welcome To Mengseats",
+    title: "Welcome to Mengseats",
     excerpt:
-      "A placeholder intro post for the voice behind the recipes, videos, and food memories on the site.",
+      "A placeholder intro post about the person behind the recipes and stories.",
     date: "April 2026",
     category: "Start Here",
   },
   {
     slug: "what-im-cooking-this-month",
-    title: "What I’m Cooking This Month",
+    title: "What I'm Cooking This Month",
     excerpt:
-      "A flexible template for monthly updates, seasonal cravings, and the recipes currently in testing.",
+      "Monthly updates, seasonal cravings, and the recipes currently in testing.",
     date: "April 2026",
     category: "Cooking Notes",
   },
@@ -65,70 +151,83 @@ export const blogPosts: BlogPost[] = [
     slug: "how-i-plan-a-recipe-shoot",
     title: "How I Plan A Recipe Shoot",
     excerpt:
-      "A behind-the-scenes style blog card for sharing gear, prep routines, and your creative process.",
+      "Behind the scenes on gear, prep routines, and the creative process.",
     date: "April 2026",
     category: "Creative Process",
+  },
+  {
+    slug: "best-eats-in-the-city",
+    title: "Best Eats in the City",
+    excerpt:
+      "A roundup of restaurant finds and local food discoveries worth sharing.",
+    date: "March 2026",
+    category: "Food Finds",
+  },
+  {
+    slug: "kitchen-gear-guide",
+    title: "Kitchen Gear Guide",
+    excerpt:
+      "The tools and equipment that make the biggest difference in my cooking.",
+    date: "March 2026",
+    category: "Gear",
   },
 ];
 
 export const aboutSections: AboutSection[] = [
   {
-    title: "How It Started",
-    subtitle: "Food memories, family flavors, and the first dishes worth writing down.",
-    body:
-      "This section is ready for your real story. For now, it introduces the heart of mengseats and leaves room for photos with captions from your earliest cooking moments.",
+    title: "How I Started Cooking",
+    subtitle: "The beginning",
+    body: "Placeholder text for your origin story — family meals, first experiments in the kitchen, and the moments that made cooking feel personal. Replace this with your real story when you're ready.",
     slides: [
       {
-        title: "First notebook",
-        caption: "Placeholder for an old recipe note, family meal, or kitchen snapshot.",
+        title: "First kitchen memory",
+        caption: "Placeholder for an old photo or family meal snapshot.",
       },
       {
-        title: "Early cooking days",
-        caption: "Use this slot for a memory-driven image with a short caption.",
+        title: "Learning the basics",
+        caption: "A photo from early cooking days — messy but meaningful.",
       },
       {
-        title: "Favorite comfort food",
-        caption: "Great place for a photo that explains where your food style comes from.",
+        title: "Comfort food roots",
+        caption: "The dish that started it all.",
       },
     ],
   },
   {
-    title: "What Mengseats Is Now",
-    subtitle: "Recipes, reels, restaurant moments, and a style that feels personal.",
-    body:
-      "This middle section can explain what people will find across the site: recipes, galleries, blog posts, and a growing archive of food content.",
+    title: "CHEFS at Tech",
+    subtitle: "The community",
+    body: "Placeholder for your experience with CHEFS at Tech — events, collaborations, the people, and how it shaped your food perspective. Swap in real content later.",
     slides: [
       {
-        title: "Recipe content",
-        caption: "Show a polished dish photo or a still from a favorite video.",
+        title: "Team cook night",
+        caption: "Placeholder for a group cooking event photo.",
       },
       {
-        title: "Creative setup",
-        caption: "Placeholder for your camera, editing setup, or kitchen workflow.",
+        title: "Event setup",
+        caption: "Setting up for a food event on campus.",
       },
       {
-        title: "Community moments",
-        caption: "Use a caption here to mention readers, followers, or shared meals.",
+        title: "The crew",
+        caption: "A group shot from a favorite gathering.",
       },
     ],
   },
   {
-    title: "Chefs I Look Up To",
-    subtitle: "A final section for influence, inspiration, and what shapes your taste.",
-    body:
-      "Your sketch mentioned a chefs section, so this block leaves room for inspiration photos, restaurant visits, cookbooks, or people whose work has shaped your voice.",
+    title: "What's Next",
+    subtitle: "Looking forward",
+    body: "Placeholder for future plans — upcoming recipes, travel, collaborations, and where mengseats is headed. Fill in your real goals and aspirations.",
     slides: [
       {
-        title: "Restaurant inspiration",
-        caption: "Placeholder for a dish, dining room, or travel photo that influenced you.",
+        title: "Upcoming projects",
+        caption: "Placeholder for what you're working on next.",
       },
       {
-        title: "Cookbook shelf",
-        caption: "A good slot for cookbook stacks, bookmarked pages, or kitchen references.",
+        title: "Dream kitchen",
+        caption: "A vision board photo or inspiration shot.",
       },
       {
-        title: "Creative north star",
-        caption: "Use this final slide for a quote image, mentor, or culinary touchstone.",
+        title: "On the horizon",
+        caption: "Where the journey goes from here.",
       },
     ],
   },

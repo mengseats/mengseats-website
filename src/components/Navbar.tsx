@@ -2,45 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { didotDisplay, didotWordmark } from "@/app/fonts";
 
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/recipes", label: "Recipes" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about", label: "About" },
+  { href: "/recipes", label: "recipes" },
+  { href: "/gallery", label: "gallery" },
+  { href: "/blog", label: "blog" },
+  { href: "/about", label: "about" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/80 bg-background/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex items-end gap-3">
-          <span className="font-display text-3xl leading-none tracking-[0.08em] text-foreground">
-            mengseats
-          </span>
-          <span className="mb-1 hidden text-xs uppercase tracking-[0.28em] text-muted sm:block">
-            recipes and stories
-          </span>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
+        <Link
+          href="/"
+          className={`${didotWordmark.className} text-[3.3rem] leading-[0.9] text-accent tracking-[0.06em]`}
+        >
+          MENGSEATS
         </Link>
 
-        <nav className="flex items-center gap-2 overflow-x-auto">
+        <nav className="hidden items-center gap-2 md:flex">
           {links.map((link) => {
             const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname === link.href || pathname.startsWith(`${link.href}/`);
-
+              pathname === link.href || pathname.startsWith(`${link.href}/`);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`rounded-full border px-4 py-2 text-sm ${
+                className={`${didotDisplay.className} rounded-[0.18rem] border px-4 py-1.5 text-base font-bold lowercase transition-all ${
                   active
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-border bg-card/70 text-foreground hover:-translate-y-0.5 hover:border-foreground/50"
+                    ? "border-accent bg-accent text-background"
+                    : "border-transparent bg-transparent text-accent hover:border-accent hover:bg-accent hover:text-background"
                 }`}
               >
                 {link.label}
@@ -49,6 +46,33 @@ export default function Navbar() {
           })}
         </nav>
       </div>
+
+      <button
+        className="absolute right-6 top-5 flex flex-col gap-[5px] p-2 md:hidden"
+        onClick={() => setMobileOpen(!mobileOpen)}
+        aria-label="Toggle menu"
+      >
+        <span className={`block h-[2px] w-6 bg-accent transition-transform ${mobileOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+        <span className={`block h-[2px] w-6 bg-accent transition-opacity ${mobileOpen ? "opacity-0" : ""}`} />
+        <span className={`block h-[2px] w-6 bg-accent transition-transform ${mobileOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+      </button>
+
+      {mobileOpen && (
+        <div className="border-b border-border bg-background px-6 py-4 shadow-md md:hidden">
+          <nav className="flex flex-col items-center gap-3 lowercase">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-sm text-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

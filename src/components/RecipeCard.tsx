@@ -1,36 +1,19 @@
 import Link from "next/link";
 import type { Recipe } from "@/data/recipes";
-import MediaPlaceholder from "@/components/MediaPlaceholder";
-import Tag from "@/components/Tag";
 
-interface RecipeCardProps {
-  recipe: Recipe;
-}
-
-export default function RecipeCard({ recipe }: RecipeCardProps) {
+export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-border bg-card">
-      <MediaPlaceholder
-        label={recipe.images[0] ?? recipe.title}
-        className={`rounded-b-none border-x-0 border-t-0 bg-gradient-to-br ${recipe.accent}`}
-      />
-      <div className="flex flex-1 flex-col gap-5 p-6">
-        <div className="flex flex-wrap gap-2">
-          <Tag>{recipe.category}</Tag>
-          <Tag>{recipe.cookTime}</Tag>
+    <Link href={`/recipes/${recipe.slug}`} className="group block">
+      <div className="aspect-[4/5] overflow-hidden rounded-xl bg-border">
+        {/* Placeholder — replace with <Image> when real photos are added */}
+        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/60 to-border text-sm text-muted">
+          {recipe.images[0] ?? "Photo"}
         </div>
-        <div className="space-y-3">
-          <h3 className="font-display text-3xl text-foreground">{recipe.title}</h3>
-          <p className="text-sm leading-7 text-muted">{recipe.description}</p>
-        </div>
-        <Link
-          href={`/recipes/${recipe.slug}`}
-          className="mt-auto inline-flex w-fit items-center gap-2 text-sm uppercase tracking-[0.22em] text-accent hover:gap-3"
-        >
-          View recipe
-          <span aria-hidden="true">+</span>
-        </Link>
       </div>
-    </article>
+      <h3 className="mt-3 font-display text-lg leading-tight text-foreground group-hover:text-accent">
+        {recipe.title}
+      </h3>
+      <p className="mt-1 text-sm text-muted">{recipe.description}</p>
+    </Link>
   );
 }
