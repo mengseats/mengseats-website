@@ -1,25 +1,27 @@
+/* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getRecipeBySlug, recipes } from "@/data/recipes";
+import { getRecipeBySlug, getRecipes } from "@/lib/site-content";
 
 interface RecipePageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
+  const recipes = await getRecipes();
   return recipes.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({ params }: RecipePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const recipe = getRecipeBySlug(slug);
+  const recipe = await getRecipeBySlug(slug);
   if (!recipe) return { title: "Recipe Not Found" };
   return { title: recipe.title, description: recipe.description };
 }
 
 export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const { slug } = await params;
-  const recipe = getRecipeBySlug(slug);
+  const recipe = await getRecipeBySlug(slug);
   if (!recipe) notFound();
 
   // Build 4 image slots: real images + remaining placeholders
@@ -39,9 +41,13 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
       <div className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
         {imageSlots.map((img, i) => (
           <div key={i} className="aspect-square overflow-hidden rounded-xl bg-border">
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-              {img ?? `Photo ${i + 1}`}
-            </div>
+            {typeof img === "string" && /^https?:\/\//.test(img) ? (
+              <img src={img} alt={`${recipe.title} ${i + 1}`} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                {img ?? `Photo ${i + 1}`}
+              </div>
+            )}
           </div>
         ))}
       </div>

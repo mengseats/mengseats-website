@@ -7,6 +7,7 @@ import { didotDisplay, didotWordmark } from "@/app/fonts";
 
 const links = [
   { href: "/recipes", label: "recipes" },
+  { href: "/shortform", label: "shortform" },
   { href: "/gallery", label: "gallery" },
   { href: "/blog", label: "blog" },
   { href: "/about", label: "about" },

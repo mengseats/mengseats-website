@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import RecipeCard from "@/components/RecipeCard";
-import { recipes } from "@/data/recipes";
+import { getRecipes } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "Recipes" };
+export const revalidate = 300;
 
-export default function RecipesPage() {
+export default async function RecipesPage() {
+  const recipes = await getRecipes();
+
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
       <div className="mb-8 text-center">

@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Mengseats Website
+
+This is a Next.js site for Mengseats with recipes, gallery content, and a Notion-backed content layer for `Recipes` and `Shortform`.
 
 ## Getting Started
 
-First, run the development server:
+Copy the example env file and fill in your Notion values:
+
+```bash
+cp .env.example .env.local
+```
+
+Required env vars:
+
+```bash
+NOTION_API_KEY=
+NOTION_RECIPES_DATA_SOURCE_ID=
+NOTION_SHORTFORM_DATA_SOURCE_ID=
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Notion Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a Notion internal integration.
+2. Copy the integration secret into `NOTION_API_KEY`.
+3. Share your `Recipes` and `Shortform` data sources with the integration.
+4. Copy each data source ID into the matching env var.
+
+The app falls back to local placeholder content if Notion is not configured yet, so the site still renders before the integration is complete.
+
+## Recommended Notion Properties
+
+`Recipes`
+
+- `Name`
+- `Slug`
+- `Thumbnail`
+- `Video Link`
+- `Time (minutes)`
+- `Ingredients`
+- `Directions`
+- `Description`
+- `Published`
+
+`Shortform`
+
+- `Project name`
+- `Slug`
+- `Status`
+- `Type`
+- `URL`
+- `Description`
+- `Hook`
+- `Sponsorship`
+- `Dates`
+- `Published`
+
+Shortform page body content can also be used for longer `Notes` and `Script` sections.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Notion API Documentation](https://developers.notion.com/reference/intro)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Recipe and shortform content is fetched server-side.
+- Notion responses are revalidated for performance.
+- Gallery content is still local and file-based.

@@ -1,9 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import RecipeCard from "@/components/RecipeCard";
-import { recentRecipes, recipes } from "@/data/recipes";
+import { getRecentRecipes, getRecipes } from "@/lib/site-content";
 
-export default function HomePage() {
-  const featured = recipes[0]; // Crispy Pork Belly
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const [recentRecipes, recipes] = await Promise.all([getRecentRecipes(4), getRecipes()]);
+  const featured = recipes[0];
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
@@ -22,42 +26,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mt-16">
-        <h2 className="mb-6 font-display text-2xl font-normal lowercase text-foreground">
-          {featured.title}
-        </h2>
+      {featured ? (
+        <section className="mt-16">
+          <h2 className="mb-6 font-display text-2xl font-normal lowercase text-foreground">
+            {featured.title}
+          </h2>
 
-        <div className="grid grid-cols-3 gap-4">
-          <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-              {featured.images[0] ?? "Photo 1"}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
+              {featured.images[0] && /^https?:\/\//.test(featured.images[0]) ? (
+                <img src={featured.images[0]} alt={featured.title} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                  {featured.images[0] ?? "Photo 1"}
+                </div>
+              )}
+            </div>
+            <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
+              {featured.images[1] && /^https?:\/\//.test(featured.images[1]) ? (
+                <img src={featured.images[1]} alt={`${featured.title} second view`} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                  {featured.images[1] ?? "Photo 2"}
+                </div>
+              )}
+            </div>
+            <div className="relative aspect-square overflow-hidden rounded-[0.35rem] bg-foreground/80">
+              <div className="flex h-full w-full items-center justify-center text-4xl text-white">
+                ▶
+              </div>
+              <span className="absolute bottom-3 left-3 text-xs text-white/80">
+                {featured.videoLabel ?? "Video"}
+              </span>
             </div>
           </div>
-          <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
-            <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-              {featured.images[1] ?? "Photo 2"}
-            </div>
-          </div>
-          <div className="relative aspect-square overflow-hidden rounded-[0.35rem] bg-foreground/80">
-            <div className="flex h-full w-full items-center justify-center text-4xl text-white">
-              ▶
-            </div>
-            <span className="absolute bottom-3 left-3 text-xs text-white/80">
-              {featured.videoLabel ?? "Video"}
-            </span>
-          </div>
-        </div>
 
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-          {featured.description}
-        </p>
-        <Link
-          href={`/recipes/${featured.slug}`}
-          className="mt-4 inline-block rounded-[0.35rem] bg-accent px-6 py-2.5 text-sm lowercase text-white hover:bg-accent-hover"
-        >
-          view recipe
-        </Link>
-      </section>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+            {featured.description}
+          </p>
+          <Link
+            href={`/recipes/${featured.slug}`}
+            className="mt-4 inline-block rounded-[0.35rem] bg-accent px-6 py-2.5 text-sm lowercase text-white hover:bg-accent-hover"
+          >
+            view recipe
+          </Link>
+        </section>
+      ) : null}
     </div>
   );
 }
