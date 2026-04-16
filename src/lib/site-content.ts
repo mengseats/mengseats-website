@@ -235,9 +235,7 @@ function mapRecipePage(page: NotionPage): Recipe {
   const timeMinutes = getPlainText(getProperty(page, ["Time (minutes)", "Time", "Cook Time"]));
   const ingredientsText = getPlainText(getProperty(page, ["Ingredients", "ingredients"]));
   const directionsText = getPlainText(getProperty(page, ["Directions", "Instructions", "directions"]));
-  const description =
-    getPlainText(getProperty(page, ["Description", "description", "Intro"])) ||
-    "Recipe pulled from Notion.";
+  const description = getPlainText(getProperty(page, ["Description", "description", "Intro"]));
   const category = getPlainText(getProperty(page, ["Category", "category"])) || "recipes";
   const servings = getPlainText(getProperty(page, ["Servings", "Yield"])) || "";
   const difficulty = getPlainText(getProperty(page, ["Difficulty", "Level"])) || "";
@@ -260,6 +258,49 @@ function mapRecipePage(page: NotionPage): Recipe {
     instructions: directionsText ? parseInstructionList(directionsText) : [],
     notes: videoUrl ? [videoUrl] : [],
   };
+}
+
+function shortformEntryToRecipe(entry: ShortformEntry): Recipe {
+  const description = entry.description.trim();
+  const notes = entry.notes.trim();
+  const intro = description || notes.split(/\n+/).find(Boolean) || "";
+
+  return {
+    slug: entry.slug,
+    title: entry.title,
+    description: intro,
+    intro,
+    category: "recipes",
+    cookTime: "",
+    servings: "",
+    difficulty: "",
+    accent: "from-[#ead8c5] via-[#f6eee3] to-[#880000]/70",
+    images: entry.images,
+    videoLabel: entry.url ? "recipe video" : undefined,
+    ingredientGroups: entry.ingredientGroups,
+    instructions: entry.instructions,
+    notes: entry.url ? [entry.url] : [],
+  };
+}
+
+function toSortableTimestamp(value: string | undefined) {
+  if (!value) {
+    return 0;
+  }
+
+  const timestamp = Date.parse(value);
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+function sortShortformPages(pages: NotionPage[]) {
+  return [...pages].sort((a, b) => {
+    const aDate =
+      getDate(getProperty(a, ["Dates", "Date"])) || a.created_time || a.last_edited_time;
+    const bDate =
+      getDate(getProperty(b, ["Dates", "Date"])) || b.created_time || b.last_edited_time;
+
+    return toSortableTimestamp(bDate) - toSortableTimestamp(aDate);
+  });
 }
 
 async function mapShortformPage(page: NotionPage): Promise<ShortformEntry> {
@@ -318,24 +359,33 @@ async function mapShortformPage(page: NotionPage): Promise<ShortformEntry> {
   };
 }
 
-function sortRecipes(items: Recipe[]) {
-  return [...items].sort((a, b) => a.title.localeCompare(b.title));
-}
-
 export async function getRecipes() {
-  const { recipesDataSourceId } = getNotionConfig();
-
-  if (!recipesDataSourceId) {
-    return fallbackRecipes;
-  }
-
   try {
-    const pages = await queryDataSourcePages(recipesDataSourceId, "Recipes");
-    const mapped = pages
+    const { recipesDataSourceId } = getNotionConfig();
+    const recipePages = recipesDataSourceId
+      ? await queryDataSourcePages(recipesDataSourceId, "Recipes")
+      : [];
+    const websiteRecipes = recipePages
       .filter(isPublished)
       .map(mapRecipePage)
       .filter((recipe) => recipe.title);
-    return mapped.length > 0 ? sortRecipes(mapped) : fallbackRecipes;
+
+    const shortformEntries = await getShortformEntries();
+    const seenSlugs = new Set(websiteRecipes.map((recipe) => recipe.slug));
+    const shortformRecipes = shortformEntries
+      .map(shortformEntryToRecipe)
+      .filter((recipe) => recipe.title)
+      .filter((recipe) => {
+        if (seenSlugs.has(recipe.slug)) {
+          return false;
+        }
+
+        seenSlugs.add(recipe.slug);
+        return true;
+      });
+
+    const combined = [...shortformRecipes, ...websiteRecipes];
+    return combined.length > 0 ? combined : fallbackRecipes;
   } catch (error) {
     console.warn("Falling back to local recipes data because Notion fetch failed.", error);
     return fallbackRecipes;
@@ -361,7 +411,7 @@ export async function getShortformEntries() {
 
   try {
     const pages = await queryDataSourcePages(shortformDataSourceId, "Shortform");
-    const mapped = await Promise.all(pages.filter(isPublished).map(mapShortformPage));
+    const mapped = await Promise.all(sortShortformPages(pages).filter(isPublished).map(mapShortformPage));
     return mapped.length > 0 ? mapped : fallbackShortformEntries;
   } catch (error) {
     console.warn("Falling back to local shortform data because Notion fetch failed.", error);

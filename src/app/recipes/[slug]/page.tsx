@@ -24,11 +24,17 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
   const recipe = await getRecipeBySlug(slug);
   if (!recipe) notFound();
 
-  // Build 4 image slots: real images + remaining placeholders
-  const imageSlots = [
-    ...recipe.images,
-    ...Array(Math.max(0, 4 - recipe.images.length)).fill(null),
-  ].slice(0, 4);
+  const imageSlots = recipe.images.filter(
+    (image): image is string => typeof image === "string" && image.length > 0,
+  );
+  const galleryGridClass =
+    imageSlots.length === 1
+      ? "grid grid-cols-1"
+      : imageSlots.length === 2
+        ? "grid grid-cols-2"
+        : imageSlots.length === 3
+          ? "grid grid-cols-2 md:grid-cols-3"
+          : "grid grid-cols-2 md:grid-cols-4";
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
@@ -37,20 +43,21 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
         {recipe.title}
       </h1>
 
-      {/* 4 images in a row */}
-      <div className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-        {imageSlots.map((img, i) => (
-          <div key={i} className="aspect-square overflow-hidden rounded-xl bg-border">
-            {typeof img === "string" && /^https?:\/\//.test(img) ? (
-              <img src={img} alt={`${recipe.title} ${i + 1}`} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-                {img ?? `Photo ${i + 1}`}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {imageSlots.length > 0 ? (
+        <div className={`mb-12 gap-4 ${galleryGridClass}`}>
+          {imageSlots.map((img, i) => (
+            <div key={i} className="aspect-square overflow-hidden rounded-xl bg-border">
+              {/^https?:\/\//.test(img) ? (
+                <img src={img} alt={`${recipe.title} ${i + 1}`} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm text-muted">
+                  {img}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {/* Two columns: Ingredients | Instructions */}
       <div className="grid gap-12 md:grid-cols-[1fr_1.5fr]">

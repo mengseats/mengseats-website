@@ -4,6 +4,8 @@ const NOTION_VERSION = "2025-09-03";
 export interface NotionPage {
   id: string;
   url?: string;
+  created_time?: string;
+  last_edited_time?: string;
   properties: Record<string, unknown>;
 }
 

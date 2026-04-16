@@ -8,6 +8,12 @@ export const revalidate = 300;
 export default async function HomePage() {
   const [recentRecipes, recipes] = await Promise.all([getRecentRecipes(4), getRecipes()]);
   const featured = recipes[0];
+  const featuredImages = featured
+    ? featured.images.filter(
+        (image): image is string => typeof image === "string" && /^https?:\/\//.test(image),
+      )
+    : [];
+  const hasFeaturedVideo = Boolean(featured?.videoLabel);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
@@ -32,34 +38,36 @@ export default async function HomePage() {
             {featured.title}
           </h2>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
-              {featured.images[0] && /^https?:\/\//.test(featured.images[0]) ? (
-                <img src={featured.images[0]} alt={featured.title} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-                  {featured.images[0] ?? "Photo 1"}
+          {featuredImages.length > 0 || hasFeaturedVideo ? (
+            <div
+              className={`grid gap-4 ${
+                featuredImages.length >= 2 || hasFeaturedVideo
+                  ? "grid-cols-2 md:grid-cols-3"
+                  : "grid-cols-1"
+              }`}
+            >
+              {featuredImages.slice(0, 2).map((image, index) => (
+                <div key={image} className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
+                  <img
+                    src={image}
+                    alt={index === 0 ? featured.title : `${featured.title} ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
                 </div>
-              )}
-            </div>
-            <div className="aspect-square overflow-hidden rounded-[0.35rem] bg-border">
-              {featured.images[1] && /^https?:\/\//.test(featured.images[1]) ? (
-                <img src={featured.images[1]} alt={`${featured.title} second view`} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-                  {featured.images[1] ?? "Photo 2"}
+              ))}
+
+              {hasFeaturedVideo ? (
+                <div className="relative aspect-square overflow-hidden rounded-[0.35rem] bg-foreground/80">
+                  <div className="flex h-full w-full items-center justify-center text-4xl text-white">
+                    ▶
+                  </div>
+                  <span className="absolute bottom-3 left-3 text-xs text-white/80">
+                    {featured.videoLabel}
+                  </span>
                 </div>
-              )}
+              ) : null}
             </div>
-            <div className="relative aspect-square overflow-hidden rounded-[0.35rem] bg-foreground/80">
-              <div className="flex h-full w-full items-center justify-center text-4xl text-white">
-                ▶
-              </div>
-              <span className="absolute bottom-3 left-3 text-xs text-white/80">
-                {featured.videoLabel ?? "Video"}
-              </span>
-            </div>
-          </div>
+          ) : null}
 
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
             {featured.description}

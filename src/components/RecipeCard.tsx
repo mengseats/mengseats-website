@@ -24,7 +24,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
       <h3 className="mt-3 font-display text-lg leading-tight text-foreground group-hover:text-accent">
         {recipe.title}
       </h3>
-      <p className="mt-1 text-sm text-muted">{recipe.description}</p>
+      {recipe.description ? <p className="mt-1 text-sm text-muted">{recipe.description}</p> : null}
     </Link>
   );
 }

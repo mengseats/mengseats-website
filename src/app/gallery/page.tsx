@@ -4,8 +4,70 @@ import { galleryCategories, galleryItems } from "@/data/content";
 
 const rowSpanPattern = [36, 22, 28, 33, 20, 30, 24, 38];
 
-function getRowSpan(index: number) {
-  return rowSpanPattern[index % rowSpanPattern.length];
+const rowSpanOverrides: Record<string, number> = {
+  "eats-beef noodle soup": 30,
+  "eats-marrow": 27,
+  "eats-brains": 20,
+  "eats-dim sum": 30,
+  "travels-taj mahal": 31,
+  "travels-casablanca": 36,
+  "travels-chongqing": 35,
+  "travels-osaka": 34,
+  "travels-shibuya": 34,
+  "tunes-magdalena bay 8.24.24": 36,
+  "tunes-slowdive 5.17.24": 20,
+  "tunes-anderson .paak 8.13.24": 20,
+  "tunes-icytwat 4.10.24": 28,
+  "other-spiraling": 30,
+  "other-gtc": 34,
+  "other-backrooms": 30,
+  "other-construction": 31,
+  "other-pisces": 36,
+  "other-stranger things": 30,
+};
+
+const objectPositionOverrides: Record<string, string> = {
+  "travels-taj mahal": "center 42%",
+  "travels-chongqing": "center 44%",
+  "travels-jaipur": "center 42%",
+  "tunes-fka twigs 3.16.26": "center 42%",
+  "tunes-kaytranada 11.12.25": "center 43%",
+  "tunes-yuree 8.12.25": "center 78%",
+  "other-spiraling": "center 55%",
+  "other-gtc": "center 48%",
+  "other-backrooms": "center 50%",
+  "other-construction": "center 50%",
+  "other-pisces": "center 50%",
+  "other-stranger things": "center 50%",
+};
+
+const imageScaleOverrides: Record<string, number> = {
+  "tunes-quannnic 9.7.25": 1.08,
+  "other-spiraling": 1.03,
+  "other-gtc": 1.03,
+  "other-backrooms": 1.02,
+  "other-stranger things": 1.02,
+};
+
+function getRowSpan(
+  item: {
+    category: string;
+    label: string;
+  },
+  index: number,
+) {
+  const overrideKey = `${item.category}-${item.label}`;
+  return rowSpanOverrides[overrideKey] ?? rowSpanPattern[index % rowSpanPattern.length];
+}
+
+function getObjectPosition(item: { category: string; label: string }) {
+  const overrideKey = `${item.category}-${item.label}`;
+  return objectPositionOverrides[overrideKey] ?? "center";
+}
+
+function getImageScale(item: { category: string; label: string }) {
+  const overrideKey = `${item.category}-${item.label}`;
+  return imageScaleOverrides[overrideKey] ?? 1;
 }
 
 interface GalleryPageProps {
@@ -52,7 +114,7 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
             key={item.id}
             className="group relative overflow-hidden rounded-[0.22rem] bg-border"
             style={{
-              gridRow: `span ${getRowSpan(index)}`,
+              gridRow: `span ${getRowSpan(item, index)}`,
             }}
           >
             <Image
@@ -60,6 +122,10 @@ export default async function GalleryPage({ searchParams }: GalleryPageProps) {
               alt={item.label}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              style={{
+                objectPosition: getObjectPosition(item),
+                transform: getImageScale(item) === 1 ? undefined : `scale(${getImageScale(item)})`,
+              }}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
 
