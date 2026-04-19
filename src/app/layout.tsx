@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { Manrope } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
-const manrope = Manrope({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
+import { calluna, hoshikoSatsuki, playfairDisplay } from "@/app/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -24,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={manrope.variable}>
+    <html lang="en" className={`${calluna.variable} ${hoshikoSatsuki.variable} ${playfairDisplay.variable}`}>
       <body className="min-h-screen flex flex-col font-sans antialiased bg-background text-foreground">
         <Navbar />
         <main className="flex-1">{children}</main>

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { didotDisplay, didotWordmark } from "@/app/fonts";
 
 const links = [
   { href: "/recipes", label: "recipes" },
@@ -21,9 +20,9 @@ export default function Navbar() {
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className={`${didotWordmark.className} text-[3.3rem] leading-[0.9] text-accent tracking-[0.06em]`}
+          className="font-wordmark text-[2.8rem] leading-[0.9] lowercase text-accent"
         >
-          MENGSEATS
+          mengseats
         </Link>
 
         <nav className="hidden items-center gap-2 md:flex">
@@ -34,7 +33,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`${didotDisplay.className} rounded-[0.18rem] border px-4 py-1.5 text-base font-bold lowercase transition-all ${
+                className={`font-display rounded-[0.18rem] border px-4 py-1.5 text-base lowercase transition-all ${
                   active
                     ? "border-accent bg-accent text-background"
                     : "border-transparent bg-transparent text-accent hover:border-accent hover:bg-accent hover:text-background"

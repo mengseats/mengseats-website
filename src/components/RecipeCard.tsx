@@ -13,7 +13,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
           <img
             src={primaryImage}
             alt={recipe.title}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/60 to-border text-sm text-muted">

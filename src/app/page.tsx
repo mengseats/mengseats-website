@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import RecipeCard from "@/components/RecipeCard";
-import { getRecentRecipes, getRecipes } from "@/lib/site-content";
+import RecipeCarousel from "@/components/RecipeCarousel";
+import { getRecipes } from "@/lib/site-content";
 
 export const revalidate = 300;
 
 export default async function HomePage() {
-  const [recentRecipes, recipes] = await Promise.all([getRecentRecipes(4), getRecipes()]);
+  const recipes = await getRecipes();
   const featured = recipes[0];
   const featuredImages = featured
     ? featured.images.filter(
@@ -18,18 +18,7 @@ export default async function HomePage() {
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
       <section>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-normal lowercase text-foreground">recipes</h2>
-          <Link href="/recipes" className="text-sm lowercase text-accent hover:text-accent-hover">
-            see all &rsaquo;
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-          {recentRecipes.map((recipe) => (
-            <RecipeCard key={recipe.slug} recipe={recipe} />
-          ))}
-        </div>
+        <RecipeCarousel recipes={recipes} />
       </section>
 
       {featured ? (

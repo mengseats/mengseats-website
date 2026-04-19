@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Slideshow from "@/components/Slideshow";
-import { aboutSections } from "@/data/content";
+import { getAboutSections } from "@/lib/site-content";
 
 export const metadata: Metadata = { title: "About" };
+export const dynamic = "force-dynamic";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const aboutSections = await getAboutSections();
+
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
       <h1 className="mb-10 text-center font-display text-3xl font-normal lowercase text-foreground">
@@ -18,10 +21,12 @@ export default function AboutPage() {
             className="grid items-center gap-10 md:grid-cols-2"
           >
             <div>
-              <h2 className="mb-4 font-display text-2xl font-normal text-foreground">
+              <h2 className="mb-5 max-w-[16ch] font-display text-[2.35rem] leading-[0.92] font-normal text-foreground sm:text-[2.8rem] md:text-[3.2rem]">
                 {section.title}
               </h2>
-              <p className="text-sm leading-relaxed text-muted">{section.body}</p>
+              <p className="whitespace-pre-line text-sm leading-relaxed text-muted">
+                {section.body}
+              </p>
             </div>
 
             <Slideshow slides={section.slides} />

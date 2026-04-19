@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #f6eee3;
+  --color-background: #ffffff;
   --color-foreground: #241714;
   --color-muted: #7a6a60;
   --color-accent: #880000;
   --color-accent-hover: #6d0000;
-  --color-border: #dccfbe;
-  --color-card: #fbf4ea;
-  --color-sand: #ead8c5;
+  --color-border: #ece7e0;
+  --color-card: #ffffff;
+  --color-sand: #f7f5f2;
   --color-olive: #5b6442;
   --color-olive-soft: #78815b;
   --color-ink-soft: #463632;
-  --font-sans: "Baskerville", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  --font-editorial: "Baskerville", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --font-sans: var(--font-calluna), "Times New Roman", serif;
+  --font-editorial: var(--font-calluna), "Times New Roman", serif;
 }
 
 html {
@@ -27,25 +27,27 @@ html {
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  background-image:
-    radial-gradient(circle at top left, rgba(234, 216, 197, 0.6), transparent 32%),
-    linear-gradient(180deg, #fcf6ee 0%, #f6eee3 100%);
+  background-image: url("/images/backgrounds/site-paper.jpg");
+  background-size: 620px auto;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  background-position: center top;
 }
 
 .font-display {
-  font-family: "Didot", "Bodoni 72", "Bodoni MT", "Times New Roman", serif;
+  font-family: var(--font-calluna), "Times New Roman", serif;
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
 }
 
 .font-wordmark {
-  font-family: "Didot", "Bodoni 72", "Bodoni MT", "Times New Roman", serif;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-family: var(--font-calluna), "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 .font-editorial {
-  font-family: "Baskerville", "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-family: var(--font-calluna), "Times New Roman", serif;
   font-weight: 400;
 }
 

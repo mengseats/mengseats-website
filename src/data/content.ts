@@ -20,6 +20,7 @@ export interface AboutSection {
   slides: {
     title: string;
     caption: string;
+    src?: string;
   }[];
 }
 
@@ -177,9 +178,9 @@ export const blogPosts: BlogPost[] = [
 
 export const aboutSections: AboutSection[] = [
   {
-    title: "How I Started Cooking",
+    title: "How I started cooking",
     subtitle: "The beginning",
-    body: "Placeholder text for your origin story — family meals, first experiments in the kitchen, and the moments that made cooking feel personal. Replace this with your real story when you're ready.",
+    body: "I started cooking when I was eight years old, not out of curiosity but out of necessity. With my parents working late, I had to figure out how to feed myself, because endless bowls of Cocoa Krispies weren't gonna cut it forever. What began as a need to cook quickly became an obsession with food.\n\nMy family's trips to China connected me to my culture through food in a way nothing else could. I remember hectic night markets and the dishes my grandma made that tasted like nothing I could find back home, and those flavors stuck with me. Closer to home, eating out with my family was its own education, since my parents would take us to hole in the wall spots and order things I'd never heard of. Between all of it, food became the thread that tied together every part of my life. Great food made me want to become a great cook.\n\nBy middle school, I was selling fried rice out of a crockpot in homeroom (I slipped some to my teacher so he wouldn't rat on me) and auctioning off frisbee sized chocolate chip cookies to my classmates. In high school, I was cooking for friends regularly and started my school's culinary club because I wanted to share my passion of cooking with others.",
     slides: [
       {
         title: "First kitchen memory",
@@ -198,7 +199,7 @@ export const aboutSections: AboutSection[] = [
   {
     title: "CHEFS at Tech",
     subtitle: "The community",
-    body: "Placeholder for your experience with CHEFS at Tech — events, collaborations, the people, and how it shaped your food perspective. Swap in real content later.",
+    body: "When I arrived at Georgia Tech, I noticed an alarming number of students who had no idea how to cook. That's when I decided to start CHEFS (Culinary Health and Education For Students) at Tech, with the goal to make food and cooking more accessible for my fellow college students.\n\nI had no idea where to begin, but I slowly built a team, figured out funding and marketing, and we got to work. We held cooking workshops in my fraternity's backyard, teaching students everything from basic knife skills to making the perfect ribeye. We also organized grocery and restaurant trips since we recognized that many students didn't have cars. Beyond that, we hosted Thanksgiving potlucks, 100 person hot pot nights, and much more.\n\nWhat started as a personal mission evolved into one of the largest student organizations on campus. I spent a lot of my time in college on CHEFS instead of studying (sorry Mom and Dad), but it was a mission I believed in too deeply to not give 100%.",
     slides: [
       {
         title: "Team cook night",
@@ -215,9 +216,9 @@ export const aboutSections: AboutSection[] = [
     ],
   },
   {
-    title: "What's Next",
+    title: "What's next",
     subtitle: "Looking forward",
-    body: "Placeholder for future plans — upcoming recipes, travel, collaborations, and where mengseats is headed. Fill in your real goals and aspirations.",
+    body: "Two years ago, I posted my first cooking video because I wanted to teach not just my fellow students how to cook, but the entire world. When I graduated college last December, I knew the corporate world wasn't for me. I wanted to pursue my passion, so I kept posting content. One day, MasterChef reached out to me, and I ended up making it on the show.\n\nRight now, I have many goals. One is to continue to make cooking to content for the entire world. I also want to start hosting my own pop ups to share my creative expression of food with others. However, my main goal is to build a community that's passionate about food and cooking. I see it as an extension of the mission I started with CHEFS, just on a larger scale. That means not only an online community, but also in person cooking classes and food events, because I've seen firsthand what happens when you share food with others, and that's something I want everyone to experience.",
     slides: [
       {
         title: "Upcoming projects",

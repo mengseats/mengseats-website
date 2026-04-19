@@ -35,6 +35,13 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
         : imageSlots.length === 3
           ? "grid grid-cols-2 md:grid-cols-3"
           : "grid grid-cols-2 md:grid-cols-4";
+  const galleryWrapperClass =
+    imageSlots.length === 1
+      ? "mx-auto max-w-[320px]"
+      : imageSlots.length === 2
+        ? "mx-auto max-w-[720px]"
+        : "mx-auto max-w-[980px]";
+  const imageTileClass = imageSlots.length === 1 ? "aspect-[4/5]" : "aspect-square";
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 pt-28 pb-10">
@@ -44,9 +51,9 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
       </h1>
 
       {imageSlots.length > 0 ? (
-        <div className={`mb-12 gap-4 ${galleryGridClass}`}>
+        <div className={`mb-12 gap-4 ${galleryGridClass} ${galleryWrapperClass}`}>
           {imageSlots.map((img, i) => (
-            <div key={i} className="aspect-square overflow-hidden rounded-xl bg-border">
+            <div key={i} className={`${imageTileClass} overflow-hidden rounded-xl bg-border`}>
               {/^https?:\/\//.test(img) ? (
                 <img src={img} alt={`${recipe.title} ${i + 1}`} className="h-full w-full object-cover" />
               ) : (
