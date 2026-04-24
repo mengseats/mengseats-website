@@ -7,7 +7,8 @@ export const revalidate = 300;
 
 export default async function HomePage() {
   const recipes = await getRecipes();
-  const featured = recipes[0];
+  const featured =
+    recipes.find((recipe) => recipe.slug === "honey-garlic-chicken") ?? recipes[0];
   const featuredImages = featured
     ? featured.images.filter(
         (image): image is string => typeof image === "string" && /^https?:\/\//.test(image),
@@ -24,7 +25,7 @@ export default async function HomePage() {
       {featured ? (
         <section className="mt-16">
           <h2 className="mb-6 font-display text-2xl font-normal lowercase text-foreground">
-            {featured.title}
+            Featured recipe: {featured.title}
           </h2>
 
           {featuredImages.length > 0 || hasFeaturedVideo ? (

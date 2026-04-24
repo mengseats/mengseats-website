@@ -55,6 +55,7 @@ const fallbackShortformEntries: ShortformEntry[] = [
 ];
 
 const ABOUT_DATA_SOURCE_ID = "1939952a-75a9-80f1-a73c-000b93bddf28";
+const ABOUT_PAGE_ID = "1919952a-75a9-801d-a1ed-fb05d7da59bc";
 const ABOUT_SLIDE_ORDER: Record<string, string[]> = {
   [normalizeKey("How I Started Cooking")]: [
     normalizeKey("Lasagna"),
@@ -326,6 +327,7 @@ export async function getAboutSections() {
   }
 
   try {
+    const bodySections = await getPagePlainTextSections(ABOUT_PAGE_ID);
     const pages = await queryDataSourcePages(ABOUT_DATA_SOURCE_ID);
     const slidesByTab = new Map<string, AboutSection["slides"]>();
 
@@ -354,9 +356,13 @@ export async function getAboutSections() {
     return fallbackAboutSections.map((section) => {
       const key = normalizeKey(section.title);
       const slides = slidesByTab.get(key);
+      const body = bodySections[key] || section.body;
 
       if (!slides || slides.length === 0) {
-        return section;
+        return {
+          ...section,
+          body,
+        };
       }
 
       const preferredOrder = ABOUT_SLIDE_ORDER[key] ?? [];
@@ -372,6 +378,7 @@ export async function getAboutSections() {
 
       return {
         ...section,
+        body,
         slides: orderedSlides,
       };
     });

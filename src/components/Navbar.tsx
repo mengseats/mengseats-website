@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/recipes", label: "recipes" },
@@ -14,9 +14,29 @@ const links = [
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 24);
+    }
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-md">
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        isScrolled
+          ? "border-b border-border/40 bg-background/58 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent"
+      }`}
+    >
       <div className="mx-auto flex max-w-[1200px] items-center justify-between px-6 py-4">
         <Link
           href="/"

@@ -7,13 +7,13 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
   const hasImage = typeof primaryImage === "string" && /^https?:\/\//.test(primaryImage);
 
   return (
-    <Link href={`/recipes/${recipe.slug}`} className="group block">
+    <Link href={`/recipes/${recipe.slug}`} className="block">
       <div className="aspect-[4/5] overflow-hidden rounded-xl bg-border">
         {hasImage ? (
           <img
             src={primaryImage}
             alt={recipe.title}
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.035]"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-[1.035]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/60 to-border text-sm text-muted">
@@ -21,7 +21,7 @@ export default function RecipeCard({ recipe }: { recipe: Recipe }) {
           </div>
         )}
       </div>
-      <h3 className="mt-3 font-display text-lg leading-tight text-foreground group-hover:text-accent">
+      <h3 className="mt-3 font-display text-lg leading-tight text-foreground hover:text-accent">
         {recipe.title}
       </h3>
       {recipe.description ? <p className="mt-1 text-sm text-muted">{recipe.description}</p> : null}

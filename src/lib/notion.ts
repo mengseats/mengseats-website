@@ -339,6 +339,9 @@ const SECTION_LABELS = new Set([
   "method",
   "recipe",
   "caption",
+  "how-i-started-cooking",
+  "chefs-at-tech",
+  "whats-next",
 ]);
 
 function getSectionKey(block: BlockObject, text: string) {

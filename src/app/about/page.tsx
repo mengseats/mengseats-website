@@ -21,10 +21,10 @@ export default async function AboutPage() {
             className="grid items-center gap-10 md:grid-cols-2"
           >
             <div>
-              <h2 className="mb-5 max-w-[16ch] font-display text-[2.35rem] leading-[0.92] font-normal text-foreground sm:text-[2.8rem] md:text-[3.2rem]">
+              <h2 className="mb-5 max-w-[18ch] font-display text-[2.1rem] leading-[0.92] font-normal text-foreground sm:text-[2.45rem] md:text-[2.9rem]">
                 {section.title}
               </h2>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-muted">
+              <p className="whitespace-pre-line text-base leading-[1.72] text-muted md:text-[1.08rem]">
                 {section.body}
               </p>
             </div>

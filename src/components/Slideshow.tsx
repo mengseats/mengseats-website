@@ -10,93 +10,72 @@ interface Slide {
 
 export default function Slideshow({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [incomingIndex, setIncomingIndex] = useState<number | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showIncoming, setShowIncoming] = useState(true);
-  const current = slides[activeIndex];
-  const previous = previousIndex !== null ? slides[previousIndex] : null;
+  const [incomingVisible, setIncomingVisible] = useState(false);
+  const current = slides[displayIndex];
+  const incoming = incomingIndex !== null ? slides[incomingIndex] : null;
 
   const prev = () => setIndex((index - 1 + slides.length) % slides.length);
   const next = () => setIndex((index + 1) % slides.length);
 
   useEffect(() => {
-    if (index === activeIndex) {
+    if (index === displayIndex) {
       return;
     }
 
-    setPreviousIndex(activeIndex);
-    setActiveIndex(index);
+    setIncomingIndex(index);
     setIsTransitioning(true);
-    setShowIncoming(false);
+    setIncomingVisible(false);
 
     const frame = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setShowIncoming(true));
+      requestAnimationFrame(() => setIncomingVisible(true));
     });
 
     const timeout = setTimeout(() => {
-      setPreviousIndex(null);
+      setDisplayIndex(index);
+      setIncomingIndex(null);
       setIsTransitioning(false);
-      setShowIncoming(true);
-    }, 420);
+      setIncomingVisible(false);
+    }, 520);
 
     return () => {
       cancelAnimationFrame(frame);
       clearTimeout(timeout);
     };
-  }, [index, activeIndex]);
+  }, [index, displayIndex]);
+
+  function SlideVisual({ slide, visible }: { slide: Slide; visible: boolean }) {
+    if (slide.src) {
+      return (
+        <img
+          src={slide.src}
+          alt={slide.caption || slide.title}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[520ms] ease-out ${
+            visible ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/40 to-border text-sm text-muted transition-opacity duration-[520ms] ease-out ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {slide.title}
+      </div>
+    );
+  }
 
   return (
     <div className="group relative overflow-hidden rounded-xl">
       {/* Image area */}
       <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px] overflow-hidden rounded-xl">
-        {previous ? (
-          previous.src ? (
-            <img
-              key={`previous-${previous.src}-${previousIndex}`}
-              src={previous.src}
-              alt={previous.caption || previous.title}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${
-                isTransitioning ? (showIncoming ? "opacity-0" : "opacity-100") : "opacity-100"
-              }`}
-            />
-          ) : (
-            <div
-              className={`absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/40 to-border text-sm text-muted transition-opacity duration-500 ease-out ${
-                isTransitioning ? (showIncoming ? "opacity-0" : "opacity-100") : "opacity-100"
-              }`}
-            >
-              {previous.title}
-            </div>
-          )
-        ) : null}
-
-        {current.src ? (
-            <img
-              key={`current-${current.src}-${index}`}
-              src={current.src}
-              alt={current.caption || current.title}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 ease-out ${
-                isTransitioning && previous
-                  ? showIncoming
-                    ? "opacity-100"
-                    : "opacity-0"
-                  : "opacity-100"
-              }`}
-            />
-          ) : (
-            <div
-              className={`absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-sand/40 to-border text-sm text-muted transition-opacity duration-500 ease-out ${
-                isTransitioning && previous
-                  ? showIncoming
-                    ? "opacity-100"
-                    : "opacity-0"
-                  : "opacity-100"
-              }`}
-            >
-              {current.title}
-            </div>
-          )}
+        <SlideVisual slide={current} visible />
+        {incoming ? <SlideVisual slide={incoming} visible={incomingVisible} /> : null}
 
         {/* Prev / Next arrows */}
         <button
@@ -116,7 +95,9 @@ export default function Slideshow({ slides }: { slides: Slide[] }) {
       </div>
 
       {/* Caption */}
-      <p className="px-5 py-3 text-center text-sm text-muted">{current.caption}</p>
+      <p className="px-5 py-3 text-center text-sm text-muted">
+        {isTransitioning && incoming ? incoming.caption : current.caption}
+      </p>
 
       {/* Dots */}
       <div className="flex justify-center gap-2 pb-4">

@@ -12,8 +12,8 @@
   --color-olive: #5b6442;
   --color-olive-soft: #78815b;
   --color-ink-soft: #463632;
-  --font-sans: var(--font-calluna), "Times New Roman", serif;
-  --font-editorial: var(--font-calluna), "Times New Roman", serif;
+  --font-sans: var(--font-fot-matisse-pro-ub), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-editorial: var(--font-fot-matisse-pro-ub), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 html {
@@ -27,27 +27,29 @@ html {
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  background-image: url("/images/backgrounds/site-paper.jpg");
-  background-size: 620px auto;
-  background-repeat: repeat;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.84)),
+    url("/images/backgrounds/halica.jpg");
+  background-size: auto, cover;
+  background-repeat: no-repeat;
   background-attachment: fixed;
-  background-position: center top;
+  background-position: center, center 62%;
 }
 
 .font-display {
-  font-family: var(--font-calluna), "Times New Roman", serif;
+  font-family: var(--font-fot-matisse-pro-ub), "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 400;
   letter-spacing: 0;
 }
 
 .font-wordmark {
-  font-family: var(--font-calluna), "Times New Roman", serif;
+  font-family: "Times New Roman", Times, serif;
   font-weight: 400;
   letter-spacing: 0;
 }
 
 .font-editorial {
-  font-family: var(--font-calluna), "Times New Roman", serif;
+  font-family: var(--font-fot-matisse-pro-ub), "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 400;
 }
 

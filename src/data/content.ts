@@ -100,7 +100,7 @@ const galleryFileMap: Record<GalleryCategory, string[]> = {
   other: [
     "spiraling.JPG",
     "gtc.JPEG",
-    "atl2.JPG",
+    "atl.jpg",
     "backrooms.jpg",
     "construction.jpg",
     "pisces.JPG",
@@ -109,9 +109,7 @@ const galleryFileMap: Record<GalleryCategory, string[]> = {
   ],
 };
 
-const galleryLabelOverrides: Record<string, string> = {
-  "other/atl2.JPG": "atl",
-};
+const galleryLabelOverrides: Record<string, string> = {};
 
 function humanizeGalleryLabel(fileName: string) {
   return fileName

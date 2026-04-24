@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import RecipeComments from "@/components/RecipeComments";
 import { getRecipeBySlug, getRecipes } from "@/lib/site-content";
 
 interface RecipePageProps {
@@ -102,6 +103,8 @@ export default async function RecipeDetailPage({ params }: RecipePageProps) {
           </ol>
         </div>
       </div>
+
+      <RecipeComments recipeSlug={recipe.slug} recipeTitle={recipe.title} />
     </div>
   );
 }

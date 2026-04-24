@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { calluna, hoshikoSatsuki, playfairDisplay } from "@/app/fonts";
+import { calluna, ccMikeKunkel, didot, fotMatisseProUb, hoshikoSatsuki, playfairDisplay, recoleta } from "@/app/fonts";
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${calluna.variable} ${hoshikoSatsuki.variable} ${playfairDisplay.variable}`}>
+    <html
+      lang="en"
+      className={`${calluna.variable} ${didot.variable} ${recoleta.variable} ${fotMatisseProUb.variable} ${ccMikeKunkel.variable} ${hoshikoSatsuki.variable} ${playfairDisplay.variable}`}
+    >
       <body className="min-h-screen flex flex-col font-sans antialiased bg-background text-foreground">
         <Navbar />
         <main className="flex-1">{children}</main>
